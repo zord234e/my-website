@@ -66,73 +66,106 @@ document.addEventListener('DOMContentLoaded', () => {
   const pwError = document.getElementById('pwError');
   const mazeContainer = document.getElementById('mazeContainer');
 
-  pwBtn.addEventListener('click', () => {
-    const val = pwInput.value.trim().toLowerCase();
-    if (val === correctPassword) {
-      pwGate.style.display = 'none';
-      mazeContainer.style.display = 'block';
-    } else {
-      pwError.style.display = 'block';
+  // Levels: 2 easy/medium, 1 hard (last)
+  const levels = [
+    {
+      name: "Easy",
+      map: [
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,1,0,0,0,0,1],
+        [1,0,1,0,1,0,1,1,0,1],
+        [1,0,1,0,0,0,1,0,0,1],
+        [1,0,1,1,1,0,1,0,1,1],
+        [1,0,0,0,1,0,0,0,1,1],
+        [1,1,1,0,1,1,1,0,1,1],
+        [1,0,0,0,0,0,1,0,0,1],
+        [1,0,1,1,1,0,1,1,0,1],
+        [1,1,1,1,1,1,1,1,1,1],
+      ]
+    },
+    {
+      name: "Medium",
+      map: [
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,1,0,1],
+        [1,0,1,1,1,1,0,1,0,1],
+        [1,0,0,0,0,1,0,1,0,1],
+        [1,1,1,1,0,1,0,1,0,1],
+        [1,0,0,1,0,0,0,1,0,1],
+        [1,0,1,1,1,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,1,1,1,1],
+      ]
+    },
+    {
+      name: "Hard",
+      map: [
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,1,0,0,0,1,0,0,1],
+        [1,0,1,0,1,0,1,1,0,1],
+        [1,0,1,0,1,0,0,0,0,1],
+        [1,0,1,0,1,1,1,1,1,1],
+        [1,0,1,0,0,0,0,0,0,1],
+        [1,0,1,1,1,1,1,1,0,1],
+        [1,0,0,0,0,0,0,1,0,1],
+        [1,1,1,1,1,1,0,1,0,1],
+        [1,1,1,1,1,1,1,1,1,1],
+      ]
     }
-  });
+  ];
 
-  pwInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') pwBtn.click();
-  });
+  let levelOrder = [];
+  let currentLevel = 0;
 
-  // Maze Code
   const canvas = document.getElementById("mazeCanvas");
   const ctx = canvas.getContext("2d");
-
-  const maze = [
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,0,0,0,0,1],
-    [1,0,1,0,1,0,1,1,0,1],
-    [1,0,1,0,0,0,1,0,0,1],
-    [1,0,1,1,1,0,1,0,1,1],
-    [1,0,0,0,1,0,0,0,1,1],
-    [1,1,1,0,1,1,1,0,1,1],
-    [1,0,0,0,0,0,1,0,0,1],
-    [1,0,1,1,1,0,1,1,0,1],
-    [1,1,1,1,1,1,1,1,1,1],
-  ];
 
   const blockSize = 30;
   let player = { x: 1, y: 1 };
   const end = { x: 8, y: 7 };
 
+  function shuffleLevels() {
+    const temp = levels.slice(0, 2);
+    levelOrder = temp.sort(() => Math.random() - 0.5);
+    levelOrder.push(levels[2]); // Hard level always last
+  }
+
   function drawMaze() {
-    for (let y = 0; y < maze.length; y++) {
-      for (let x = 0; x < maze[y].length; x++) {
-        ctx.fillStyle = maze[y][x] === 1 ? "#000" : "#fff";
+    const map = levelOrder[currentLevel].map;
+    for (let y = 0; y < map.length; y++) {
+      for (let x = 0; x < map[y].length; x++) {
+        ctx.fillStyle = map[y][x] === 1 ? "#000" : "#fff";
         ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
       }
     }
-
-    // Draw end square
     ctx.fillStyle = "blue";
     ctx.fillRect(end.x * blockSize, end.y * blockSize, blockSize, blockSize);
-
-    // Draw player
     ctx.fillStyle = "red";
     ctx.fillRect(player.x * blockSize, player.y * blockSize, blockSize, blockSize);
   }
 
   function move(dx, dy) {
+    const map = levelOrder[currentLevel].map;
     const newX = player.x + dx;
     const newY = player.y + dy;
-    if (maze[newY][newX] === 0) {
+    if (map[newY][newX] === 0) {
       player.x = newX;
       player.y = newY;
       drawMaze();
       if (player.x === end.x && player.y === end.y) {
-        alert("You passed the human test!");
-        location.reload();
+        currentLevel++;
+        if (currentLevel < levelOrder.length) {
+          alert(`✅ Level ${currentLevel} passed!`);
+          player = { x: 1, y: 1 };
+          drawMaze();
+        } else {
+          alert("🎉 You passed the human test!");
+          location.reload();
+        }
       }
     } else {
-      // Hit wall = reset
-      player.x = 1;
-      player.y = 1;
+      player = { x: 1, y: 1 };
       drawMaze();
     }
   }
@@ -144,7 +177,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === "ArrowRight" || e.key === "d") move(1, 0);
   });
 
-  drawMaze();
+  pwBtn.addEventListener('click', () => {
+    const val = pwInput.value.trim().toLowerCase();
+    if (val === correctPassword) {
+      pwGate.style.display = 'none';
+      mazeContainer.style.display = 'block';
+      shuffleLevels();
+      drawMaze();
+    } else {
+      pwError.style.display = 'block';
+    }
+  });
+
+  pwInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') pwBtn.click();
+  });
 });
 </script>
 
