@@ -10,53 +10,29 @@
   <p>This is my first website.</p>
 
   <!-- Jump scare code -->
-  <div id="jumpScare" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:black; justify-content:center; align-items:center; flex-direction:column; z-index:1000; color:white; text-align:center;">
+  <div id="jumpScare" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100vw; height:100vh;
+    background:black;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:900; /* lower than the button */
+    color:white;
+    text-align:center;">
+    
     <img src="jump-scare.png" style="max-width:100%; max-height:80vh;" alt="Jump Scare">
     <div style="margin-top: 20px; font-size: 2em; font-weight: bold;">
       Hello there! I'm assuming you're new.
     </div>
   </div>
 
-  <!-- Toggle Theme Button (bottom-left corner) -->
+  <!-- Toggle Theme Button (always on bottom-left, stays visible) -->
   <button onclick="toggleTheme()" style="
     position: fixed;
     bottom: 20px;
     left: 20px;
     padding: 12px 24px;
     font-size: 1em;
-    cursor: pointer;
-    z-index: 999;
-    background: #222;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 0 10px #444;
-  ">
-    Toggle Theme
-  </button>
-
-  <script>
-    // Jump scare logic
-    const jumpScareDiv = document.getElementById('jumpScare');
-    setTimeout(() => {
-      jumpScareDiv.style.display = 'flex';
-    }, 5000);
-
-    // Theme toggle logic
-    function toggleTheme() {
-      const body = document.body;
-      const isDark = body.classList.contains('dark');
-
-      if (isDark) {
-        body.classList.remove('dark');
-        body.style.backgroundColor = 'white';
-        body.style.color = 'black';
-      } else {
-        body.classList.add('dark');
-        body.style.backgroundColor = 'black';
-        body.style.color = 'white';
-      }
-    }
-  </script>
-</body>
-</html>
