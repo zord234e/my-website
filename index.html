@@ -4,23 +4,46 @@
   <title>My Website</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="background-color: black; color: white;">
+
   <h1>Hello, world!</h1>
   <p>This is my first website.</p>
 
+  <!-- Toggle Theme Button -->
+  <button onclick="toggleTheme()" style="padding: 10px 20px; font-size: 1em; cursor: pointer; margin-top: 20px;">
+    Toggle Theme
+  </button>
+
   <!-- Jump scare code -->
   <div id="jumpScare" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:black; justify-content:center; align-items:center; flex-direction:column; z-index:1000; color:white; text-align:center;">
-  <img src="jump-scare.png" style="max-width:100%; max-height:80vh;" alt="Jump Scare">
-  <div style="margin-top: 20px; font-size: 2em; font-weight: bold;">
-    Hello there! I'm assuming you're new.
+    <img src="jump-scare.png" style="max-width:100%; max-height:80vh;" alt="Jump Scare">
+    <div style="margin-top: 20px; font-size: 2em; font-weight: bold;">
+      Hello there! I'm assuming you're new.
+    </div>
   </div>
-</div>
 
   <script>
+    // Jump scare shows after 5 seconds
     const jumpScareDiv = document.getElementById('jumpScare');
     setTimeout(() => {
       jumpScareDiv.style.display = 'flex';
-    }, 5000); // Show after 5 seconds
+    }, 5000);
+
+    // Toggle between dark and light themes
+    function toggleTheme() {
+      const body = document.body;
+      const isDark = body.classList.contains('dark');
+
+      if (isDark) {
+        body.classList.remove('dark');
+        body.style.backgroundColor = 'white';
+        body.style.color = 'black';
+      } else {
+        body.classList.add('dark');
+        body.style.backgroundColor = 'black';
+        body.style.color = 'white';
+      }
+    }
   </script>
 </body>
 </html>
