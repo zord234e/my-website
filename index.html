@@ -26,7 +26,16 @@
       position: absolute;
       background: #0f0;
     }
-    #start, #end {
+    #player {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      z-index: 10;
+      top: 15px;
+      left: 15px;
+    }
+    #end {
       position: absolute;
       background: #00f;
       color: white;
@@ -34,14 +43,6 @@
       text-align: center;
       padding-top: 5px;
       z-index: 3;
-    }
-    #start {
-      width: 60px;
-      height: 30px;
-      left: 10px;
-      top: 10px;
-    }
-    #end {
       width: 60px;
       height: 30px;
       right: 10px;
@@ -74,7 +75,7 @@
   </div>
 
   <div id="mazeContainer">
-    <div id="start">START</div>
+    <div id="player"></div>
     <div id="end">END</div>
     <div class="wall" style="top: 0; left: 0; width: 800px; height: 10px;"></div>
     <div class="wall" style="top: 590px; left: 0; width: 800px; height: 10px;"></div>
@@ -86,8 +87,8 @@
     <div class="wall" style="top: 400px; left: 100px; width: 700px; height: 10px;"></div>
   </div>
 
-  <div id="jumpscare">
-    <img src="https://i.ibb.co/4RvTBRG/scary-face.jpg" alt="Scary Face">
+    <div id="jumpscare">
+    <img src="https://i.imgur.com/UWbK5iX.png" alt="Scary Face">
     <audio id="scream" src="https://www.myinstants.com/media/sounds/horror-scream-4.mp3"></audio>
   </div>
 
@@ -112,13 +113,60 @@
       if(e.key === 'Enter') pwBtn.click();
     });
 
+    const player = document.getElementById('player');
     const walls = document.querySelectorAll('.wall');
     const jumpscare = document.getElementById('jumpscare');
     const scream = document.getElementById('scream');
     const end = document.getElementById('end');
 
-    walls.forEach(wall => {
-      wall.addEventListener('mouseenter', triggerScare);
+    function getRect(el) {
+      return el.getBoundingClientRect();
+    }
+
+    function checkCollision(rect1, rect2) {
+      return !(rect1.right < rect2.left || 
+               rect1.left > rect2.right || 
+               rect1.bottom < rect2.top || 
+               rect1.top > rect2.bottom);
+    }
+
+    function checkWallCollision() {
+      const playerRect = getRect(player);
+      for (let wall of walls) {
+        if (checkCollision(playerRect, getRect(wall))) {
+          triggerScare();
+          break;
+        }
+      }
+    }
+
+    function checkWin() {
+      if (checkCollision(getRect(player), getRect(end))) {
+        alert("You win... this time.");
+        location.reload();
+      }
+    }
+
+    function movePlayer(dx, dy) {
+      const newLeft = player.offsetLeft + dx;
+      const newTop = player.offsetTop + dy;
+      player.style.left = newLeft + 'px';
+      player.style.top = newTop + 'px';
+      checkWallCollision();
+      checkWin();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key.toLowerCase()) {
+        case 'arrowup':
+        case 'w': movePlayer(0, -5); break;
+        case 'arrowdown':
+        case 's': movePlayer(0, 5); break;
+        case 'arrowleft':
+        case 'a': movePlayer(-5, 0); break;
+        case 'arrowright':
+        case 'd': movePlayer(5, 0); break;
+      }
     });
 
     function triggerScare() {
@@ -126,11 +174,6 @@
       jumpscare.style.display = 'flex';
       scream.play();
     }
-
-    end.addEventListener('mouseenter', () => {
-      alert("You win... this time.");
-      location.reload();
-    });
   </script>
 </body>
 </html>
