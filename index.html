@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Cursed Maze</title>
   <style>
     body {
@@ -62,14 +62,14 @@
 
 <div id="passwordGate">
   <h2>Enter Password to Access</h2>
-  <input id="pwInput" type="password" placeholder="Password">
+  <input id="pwInput" type="password" placeholder="Password" />
   <button id="pwBtn">Submit</button>
   <p id="pwError" style="display:none; color:red;">Wrong password!</p>
 </div>
 
 <div id="mazeContainer">
   <canvas id="mazeCanvas" width="600" height="600"></canvas>
-  <div id="timer">3:00</div>
+  <div id="timer">1:00</div>
 </div>
 
 <div id="statusBar">Level 1</div>
@@ -154,8 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentLevel = 0;
   let end = { x: 8, y: 8 };
   let player = { x: 1, y: 1 };
-  let timeLeft = 180;
+  let timeLeft = 60; // 1 minute timer
   let timerInterval;
+
+  // Load wall hit sound
+  const wallHitSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
 
   function shuffleLevels() {
     const temp = levels.slice(0, 2);
@@ -205,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } else {
+      wallHitSound.play(); // Play sound when hitting a wall
       alert("❌ You failed! Hit a wall.");
       player = { x: 1, y: 1 };
       drawMaze();
