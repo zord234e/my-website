@@ -42,6 +42,20 @@
     canvas {
       display: block;
     }
+    #statusBar {
+      display: none;
+      text-align: center;
+      color: #0f0;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    #timer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 16px;
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -55,7 +69,10 @@
 
 <div id="mazeContainer">
   <canvas id="mazeCanvas" width="300" height="300"></canvas>
+  <div id="timer">3:00</div>
 </div>
+
+<div id="statusBar">Level 1</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -65,11 +82,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const pwBtn = document.getElementById('pwBtn');
   const pwError = document.getElementById('pwError');
   const mazeContainer = document.getElementById('mazeContainer');
+  const statusBar = document.getElementById('statusBar');
+  const timerDisplay = document.getElementById('timer');
 
-  // ✅ NEW SOLVABLE EASY MAZE
+  const canvas = document.getElementById("mazeCanvas");
+  const ctx = canvas.getContext("2d");
+  const blockSize = 30;
+
   const levels = [
     {
       name: "Easy",
+      end: { x: 8, y: 8 },
       map: [
         [1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,1,1,1,1],
@@ -85,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       name: "Medium",
+      end: { x: 8, y: 8 },
       map: [
         [1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,1,0,1],
@@ -95,11 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
         [1,0,1,1,1,1,1,1,0,1],
         [1,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,0,1],
-        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1]
       ]
     },
     {
       name: "Hard",
+      end: { x: 8, y: 8 },
       map: [
         [1,1,1,1,1,1,1,1,1,1],
         [1,0,1,0,0,0,1,0,0,1],
@@ -110,39 +135,40 @@ document.addEventListener('DOMContentLoaded', () => {
         [1,0,1,1,1,1,1,1,0,1],
         [1,0,0,0,0,0,0,1,0,1],
         [1,1,1,1,1,1,0,1,0,1],
-        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1]
       ]
     }
   ];
 
   let levelOrder = [];
   let currentLevel = 0;
-
-  const canvas = document.getElementById("mazeCanvas");
-  const ctx = canvas.getContext("2d");
-
-  const blockSize = 30;
+  let end = { x: 8, y: 8 };
   let player = { x: 1, y: 1 };
-  const end = { x: 8, y: 7 };
+  let timeLeft = 180;
+  let timerInterval;
 
   function shuffleLevels() {
     const temp = levels.slice(0, 2);
     levelOrder = temp.sort(() => Math.random() - 0.5);
-    levelOrder.push(levels[2]); // Always put hard level last
+    levelOrder.push(levels[2]);
   }
 
   function drawMaze() {
     const map = levelOrder[currentLevel].map;
+    end = levelOrder[currentLevel].end;
+
     for (let y = 0; y < map.length; y++) {
       for (let x = 0; x < map[y].length; x++) {
         ctx.fillStyle = map[y][x] === 1 ? "#000" : "#fff";
         ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
       }
     }
+
     ctx.fillStyle = "blue";
     ctx.fillRect(end.x * blockSize, end.y * blockSize, blockSize, blockSize);
     ctx.fillStyle = "red";
     ctx.fillRect(player.x * blockSize, player.y * blockSize, blockSize, blockSize);
+    statusBar.innerText = `Level ${currentLevel + 1}`;
   }
 
   function move(dx, dy) {
@@ -161,20 +187,36 @@ document.addEventListener('DOMContentLoaded', () => {
           drawMaze();
         } else {
           alert("🎉 You passed the human test!");
+          clearInterval(timerInterval);
           location.reload();
         }
       }
     } else {
+      alert("❌ You failed! Hit a wall.");
       player = { x: 1, y: 1 };
       drawMaze();
     }
   }
 
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("⏰ Time's up! You failed.");
+        location.reload();
+      }
+    }, 1000);
+  }
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowUp" || e.key === "w") move(0, -1);
-    if (e.key === "ArrowDown" || e.key === "s") move(0, 1);
-    if (e.key === "ArrowLeft" || e.key === "a") move(-1, 0);
-    if (e.key === "ArrowRight" || e.key === "d") move(1, 0);
+    if (["ArrowUp", "w"].includes(e.key)) move(0, -1);
+    if (["ArrowDown", "s"].includes(e.key)) move(0, 1);
+    if (["ArrowLeft", "a"].includes(e.key)) move(-1, 0);
+    if (["ArrowRight", "d"].includes(e.key)) move(1, 0);
   });
 
   pwBtn.addEventListener('click', () => {
@@ -182,8 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (val === correctPassword) {
       pwGate.style.display = 'none';
       mazeContainer.style.display = 'block';
+      statusBar.style.display = 'block';
       shuffleLevels();
       drawMaze();
+      startTimer();
     } else {
       pwError.style.display = 'block';
     }
