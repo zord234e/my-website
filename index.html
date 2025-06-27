@@ -25,6 +25,7 @@
       border: none;
       border-radius: 8px;
       box-shadow: 0 0 10px #ff4444;
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
     }
 
     /* Jump scare overlay */
@@ -78,7 +79,8 @@
       jumpScareDiv.style.display = 'flex';
     }, 5000);
 
-    // Toggle between light and dark mode
+    const themeButton = document.getElementById('themeButton');
+
     function toggleTheme() {
       const body = document.body;
       const isDark = body.classList.contains('dark');
@@ -87,10 +89,20 @@
         body.classList.remove('dark');
         body.style.backgroundColor = 'white';
         body.style.color = 'black';
+
+        // Update button colors for light mode
+        themeButton.style.backgroundColor = 'white';
+        themeButton.style.color = 'black';
+        themeButton.style.boxShadow = '0 0 10px #ccc';
       } else {
         body.classList.add('dark');
         body.style.backgroundColor = 'black';
         body.style.color = 'white';
+
+        // Update button colors for dark mode
+        themeButton.style.backgroundColor = 'red';
+        themeButton.style.color = 'white';
+        themeButton.style.boxShadow = '0 0 10px #ff4444';
       }
     }
   </script>
