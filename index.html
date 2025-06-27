@@ -53,11 +53,36 @@
       background-color: #f00;
       color: black;
     }
+
+    /* Red static glitch overlay */
+    .glitch-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 0, 0, 0.1) 0px,
+        transparent 1px,
+        rgba(255, 0, 0, 0.1) 2px
+      );
+      animation: flicker 0.3s infinite;
+    }
   </style>
 </head>
 <body>
+  <!-- Background Video -->
+  <video autoplay loop muted playsinline id="bg-video" style="position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; filter: contrast(2) brightness(0.5);">
+    <source src="https://static.videezy.com/system/resources/previews/000/019/189/original/Glitch_-_Free_HD_Video_Background_-_Videezy.mp4" type="video/mp4">
+  </video>
+
+  <div class="glitch-overlay"></div>
+
   <h1 class="glitch">YOU SHOULDN'T BE HERE</h1>
   <p class="glitch">This site is cursed. Leave while you can.</p>
+  <p id="typewriter" class="glitch"></p>
 
   <img src="https://i.imgur.com/zrQ9bIK.png" alt="Jump Scare" />
 
@@ -65,14 +90,38 @@
   <button onclick="location.reload()">Try to Escape</button>
 
   <audio id="jumpscare-audio" src="https://www.myinstants.com/media/sounds/horror-scream-4.mp3"></audio>
+  <audio id="laugh" src="https://www.myinstants.com/media/sounds/evil-laugh.mp3"></audio>
 
   <script>
+    // Jump scare image click
     document.querySelector("img[alt='Jump Scare']").onclick = () => {
       const audio = document.getElementById('jumpscare-audio');
       audio.play();
       document.body.style.backgroundColor = 'black';
       document.body.innerHTML = "<h1 class='glitch'>TOO LATE...</h1>";
     };
+
+    // Typewriter creepy text
+    const typeText = "They are watching you...";
+    let i = 0;
+    function type() {
+      if (i < typeText.length) {
+        document.getElementById("typewriter").innerHTML += typeText.charAt(i);
+        i++;
+        setTimeout(type, 100);
+      }
+    }
+    window.onload = type;
+
+    // Random scary alert
+    setTimeout(() => {
+      alert("HE'S COMING FOR YOU...");
+    }, Math.random() * 10000 + 5000);
+
+    // Evil laugh after 10 seconds
+    setTimeout(() => {
+      document.getElementById("laugh").play();
+    }, 10000);
   </script>
 </body>
 </html>
