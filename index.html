@@ -4,66 +4,15 @@
   <meta charset="UTF-8" />
   <title>CURSED HACKER SITE + MAZE</title>
   <style>
-    body {
-      background: black;
-      color: #0f0;
-      font-family: monospace;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      user-select: none;
-    }
-    #mazeContainer {
-      position: relative;
-      width: 800px;
-      height: 600px;
-      margin: 40px auto;
-      background: #000;
-      border: 5px solid #0f0;
-      display: none;
-    }
-    .wall {
-      position: absolute;
-      background: #0f0;
-    }
-    #player {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      z-index: 10;
-      top: 15px;
-      left: 15px;
-    }
-    #end {
-      position: absolute;
-      background: #00f;
-      color: white;
-      font-family: monospace;
-      text-align: center;
-      padding-top: 5px;
-      z-index: 3;
-      width: 60px;
-      height: 30px;
-      right: 10px;
-      bottom: 10px;
-    }
-    #jumpscare {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-    }
-    #jumpscare img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-    }
+    body { background: black; color: #0f0; font-family: monospace; margin: 0; padding: 0; overflow: hidden; user-select: none; }
+    #passwordGate { position: fixed; top:0; left:0; width:100vw; height:100vh; background: black; color: #0f0; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+    #passwordGate input { font-size:20px; padding:10px; background:black; border:2px solid #0f0; color:#0f0; outline:none; width:250px; text-align:center; }
+    #passwordGate button { font-size:18px; padding:10px 20px; margin-top:10px; cursor:pointer; background:#0f0; color:black; border:none; }
+    #passwordGate p { color:red; margin-top:10px; display:none; }
+    #mazeContainer { display:none; position:relative; width:800px; height:600px; margin:40px auto; background:#000; border:5px solid #0f0; }
+    .wall { position:absolute; background:#0f0; }
+    #player { position:absolute; width:20px; height:20px; background:red; z-index:10; top:15px; left:15px; }
+    #end { position:absolute; background:#00f; color:white; text-align:center; width:60px; height:30px; right:10px; bottom:10px; line-height:30px; }
   </style>
 </head>
 <body>
@@ -71,109 +20,39 @@
     <h2>Enter Password to Access</h2>
     <input id="pwInput" type="password" autocomplete="off" placeholder="Password" />
     <button id="pwBtn">Submit</button>
-    <p id="pwError" style="color:red; display:none;">Wrong password! Try again.</p>
+    <p id="pwError">Wrong password! Try again.</p>
   </div>
-
   <div id="mazeContainer">
     <div id="player"></div>
     <div id="end">END</div>
-    <div class="wall" style="top: 0; left: 0; width: 800px; height: 10px;"></div>
-    <div class="wall" style="top: 590px; left: 0; width: 800px; height: 10px;"></div>
-    <div class="wall" style="top: 0; left: 0; width: 10px; height: 600px;"></div>
-    <div class="wall" style="top: 0; left: 790px; width: 10px; height: 600px;"></div>
-    <div class="wall" style="top: 100px; left: 0px; width: 700px; height: 10px;"></div>
-    <div class="wall" style="top: 200px; left: 100px; width: 700px; height: 10px;"></div>
-    <div class="wall" style="top: 300px; left: 0px; width: 700px; height: 10px;"></div>
-    <div class="wall" style="top: 400px; left: 100px; width: 700px; height: 10px;"></div>
+    <div class="wall" style="top:0; left:0; width:800px; height:10px;"></div>
+    <div class="wall" style="top:590px; left:0; width:800px; height:10px;"></div>
+    <div class="wall" style="top:0; left:0; width:10px; height:600px;"></div>
+    <div class="wall" style="top:0; left:790px; width:10px; height:600px;"></div>
+    <div class="wall" style="top:100px; left:0; width:700px; height:10px;"></div>
+    <div class="wall" style="top:200px; left:100px; width:700px; height:10px;"></div>
+    <div class="wall" style="top:300px; left:0; width:700px; height:10px;"></div>
+    <div class="wall" style="top:400px; left:100px; width:700px; height:10px;"></div>
   </div>
-
-    <div id="jumpscare">
-    <img src="https://i.imgur.com/UWbK5iX.png" alt="Scary Face">
-    <audio id="scream" src="https://www.myinstants.com/media/sounds/horror-scream-4.mp3"></audio>
-  </div>
-
   <script>
-    const correctPassword = "yourhacked";
+    const correctPassword = 'yourhacked';
     const pwGate = document.getElementById('passwordGate');
     const pwInput = document.getElementById('pwInput');
     const pwBtn = document.getElementById('pwBtn');
     const pwError = document.getElementById('pwError');
-    const mazeContainer = document.getElementById('mazeContainer');
-
-    pwBtn.onclick = () => {
-      if(pwInput.value.trim().toLowerCase() === correctPassword) {
-        pwGate.style.display = 'none';
-        mazeContainer.style.display = 'block';
-      } else {
-        pwError.style.display = 'block';
-      }
+    const maze = document.getElementById('mazeContainer');
+    pwError.style.display='none';
+    pwBtn.onclick = ()=>{
+      if(pwInput.value.trim().toLowerCase()===correctPassword){pwGate.style.display='none';maze.style.display='block';}
+      else pwError.style.display='block';
     };
-
-    pwInput.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter') pwBtn.click();
-    });
-
-    const player = document.getElementById('player');
-    const walls = document.querySelectorAll('.wall');
-    const jumpscare = document.getElementById('jumpscare');
-    const scream = document.getElementById('scream');
-    const end = document.getElementById('end');
-
-    function getRect(el) {
-      return el.getBoundingClientRect();
-    }
-
-    function checkCollision(rect1, rect2) {
-      return !(rect1.right < rect2.left || 
-               rect1.left > rect2.right || 
-               rect1.bottom < rect2.top || 
-               rect1.top > rect2.bottom);
-    }
-
-    function checkWallCollision() {
-      const playerRect = getRect(player);
-      for (let wall of walls) {
-        if (checkCollision(playerRect, getRect(wall))) {
-          triggerScare();
-          break;
-        }
-      }
-    }
-
-    function checkWin() {
-      if (checkCollision(getRect(player), getRect(end))) {
-        alert("You win... this time.");
-        location.reload();
-      }
-    }
-
-    function movePlayer(dx, dy) {
-      const newLeft = player.offsetLeft + dx;
-      const newTop = player.offsetTop + dy;
-      player.style.left = newLeft + 'px';
-      player.style.top = newTop + 'px';
-      checkWallCollision();
-      checkWin();
-    }
-
-    document.addEventListener('keydown', (e) => {
-      switch (e.key.toLowerCase()) {
-        case 'arrowup':
-        case 'w': movePlayer(0, -5); break;
-        case 'arrowdown':
-        case 's': movePlayer(0, 5); break;
-        case 'arrowleft':
-        case 'a': movePlayer(-5, 0); break;
-        case 'arrowright':
-        case 'd': movePlayer(5, 0); break;
-      }
-    });
-
-    function triggerScare() {
-      document.body.style.cursor = 'none';
-      jumpscare.style.display = 'flex';
-      scream.play();
-    }
+    pwInput.addEventListener('keydown',e=>{if(e.key==='Enter') pwBtn.click();});
+    const player=document.getElementById('player'), walls=document.querySelectorAll('.wall'), end=document.getElementById('end');
+    function getRect(e){return e.getBoundingClientRect();}
+    function collide(){const r1=getRect(player);for(const w of walls)if(!(r1.right<w.getBoundingClientRect().left||r1.left>w.getBoundingClientRect().right||r1.bottom<w.getBoundingClientRect().top||r1.top>w.getBoundingClientRect().bottom)){alert('BOO! You touched the wall!');location.reload();}}
+    function win(){if(!(getRect(player).right<getRect(end).left||getRect(player).left>getRect(end).right||getRect(player).bottom<getRect(end).top||getRect(player).top>getRect(end).bottom)){alert('You win... this time.');location.reload();}}
+    function move(dx,dy){player.style.left=player.offsetLeft+dx+'px';player.style.top=player.offsetTop+dy+'px';collide();win();}
+    document.addEventListener('keydown',e=>{switch(e.key.toLowerCase()){case 'w':case 'arrowup':move(0,-5);break;case 's':case 'arrowdown':move(0,5);break;case 'a':case 'arrowleft':move(-5,0);break;case 'd':case 'arrowright':move(5,0);break;}});
   </script>
 </body>
 </html>
