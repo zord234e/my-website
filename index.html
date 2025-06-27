@@ -1,359 +1,429 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<title>CURSED SITE V3</title>
-<style>
-  /* Basic body + monospace + black bg + green text */
-  body {
-    background-color: black;
-    color: #0f0;
-    font-family: monospace;
-    margin: 0; padding: 0;
-    overflow-x: hidden;
-    cursor: url('https://cdn-icons-png.flaticon.com/512/28/28223.png'), auto;
-  }
+  <meta charset="UTF-8" />
+  <title>CURSED HACKER SITE</title>
+  <style>
+    /* Base Styles */
+    body {
+      background-color: black;
+      color: #0f0;
+      font-family: monospace;
+      margin: 0; padding: 0;
+      overflow-x: hidden;
+      cursor: url('https://cdn-icons-png.flaticon.com/512/28/28223.png'), auto;
+      user-select: none;
+    }
 
-  /* Flicker glitch */
-  @keyframes flicker {
-    0%,19%,21%,23%,25%,54%,56%,100% {opacity:1;}
-    20%,24%,55% {opacity:0;}
-  }
-  .glitch {
-    animation: flicker 3s infinite;
-    text-shadow: 0 0 5px #0f0, 0 0 20px #0f0;
-  }
+    /* Flicker glitch animation */
+    @keyframes flicker {
+      0%,19%,21%,23%,25%,54%,56%,100% {opacity:1;}
+      20%,24%,55% {opacity:0;}
+    }
+    .glitch {
+      animation: flicker 3s infinite;
+      text-shadow: 0 0 5px #0f0, 0 0 20px #0f0;
+    }
 
-  /* VHS static overlay */
-  #staticOverlay {
-    position: fixed; top:0; left:0; width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 9999;
-    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.1) 2px, transparent 3px);
-    animation: flicker 0.15s infinite;
-  }
+    /* Static VHS overlay */
+    #staticOverlay {
+      position: fixed; top:0; left:0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.1) 2px, transparent 3px);
+      animation: flicker 0.15s infinite;
+    }
 
-  /* Terminal console at bottom */
-  #console {
-    position: fixed;
-    bottom: 0; left: 0;
-    width: 100%; max-height: 150px;
-    background: black;
-    color: #0f0;
-    font-family: monospace;
-    font-size: 12px;
-    padding: 5px;
-    overflow-y: auto;
-    box-sizing: border-box;
-    z-index: 9998;
-  }
+    /* Terminal console at bottom */
+    #console {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%; max-height: 150px;
+      background: black;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 5px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      z-index: 9998;
+    }
 
-  /* Login screen overlay */
-  #loginOverlay {
-    position: fixed; top: 0; left:0; width: 100vw; height: 100vh;
-    background: black;
-    color: #0f0;
-    font-family: monospace;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    display: none;
-  }
+    /* Password gate overlay */
+    #passwordGate {
+      position: fixed;
+      top:0; left:0; width:100vw; height:100vh;
+      background: black;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100000;
+    }
+    #passwordGate input {
+      font-size: 20px;
+      padding: 10px;
+      margin-top: 10px;
+      background: black;
+      border: 2px solid #0f0;
+      color: #0f0;
+      outline: none;
+      width: 250px;
+      text-align: center;
+    }
+    #passwordGate button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      background:#0f0;
+      color:black;
+      border:none;
+      transition: background 0.3s ease;
+    }
+    #passwordGate button:hover {
+      background: #0b0;
+    }
+    #passwordGate p {
+      color:red;
+      margin-top:10px;
+      display:none;
+    }
 
-  #loginOverlay input {
-    background: black;
-    border: 2px solid #0f0;
-    color: #0f0;
-    font-family: monospace;
-    font-size: 18px;
-    padding: 10px;
-    margin: 10px 0;
-    width: 250px;
-    outline: none;
-  }
+    /* Main content */
+    #mainContent {
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+    #mainContent.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-  #loginOverlay button {
-    background: #0f0;
-    border: none;
-    color: black;
-    font-family: monospace;
-    font-size: 18px;
-    padding: 10px 20px;
-    cursor: pointer;
-  }
+    h1, p {
+      text-align: center;
+      user-select: none;
+    }
 
-  /* Flashing scary face */
-  #flashface {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 10001;
-    display: none;
-  }
+    /* IP Address display */
+    #ipDisplay {
+      text-align: center;
+      font-family: monospace;
+      color: #0f0;
+      margin-top: 20px;
+      font-size: 18px;
+      user-select: text;
+    }
 
-  /* Popups container */
-  #popups {
-    position: fixed;
-    top: 0; left:0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 10002;
-  }
+    /* Flash scary face */
+    #flashface {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 10001;
+      display: none;
+      pointer-events: none;
+    }
 
-  .popup {
-    position: absolute;
-    color: red;
-    font-family: monospace;
-    font-size: 40px;
-    user-select: none;
-    animation: fadeout 3s forwards;
-  }
+    /* Popups container */
+    #popups {
+      position: fixed;
+      top: 0; left:0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 10002;
+      user-select: none;
+    }
 
-  @keyframes fadeout {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
-  }
+    .popup {
+      position: absolute;
+      color: red;
+      font-family: monospace;
+      font-size: 40px;
+      user-select: none;
+      animation: fadeout 3s forwards;
+    }
 
-  /* Password gate overlay */
-  #passwordGate {
-    position: fixed;
-    top:0; left:0; width:100vw; height:100vh;
-    background: black;
-    color: #0f0;
-    font-family: monospace;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 100000;
-  }
-  #passwordGate input {
-    font-size: 20px;
-    padding: 10px;
-    margin-top: 10px;
-    background: black;
-    border: 2px solid #0f0;
-    color: #0f0;
-    outline: none;
-  }
-  #passwordGate button {
-    font-size: 18px;
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
-    background:#0f0;
-    color:black;
-    border:none;
-  }
-  #passwordGate p {
-    color:red;
-    margin-top:10px;
-    display:none;
-  }
+    @keyframes fadeout {
+      0% {opacity: 1;}
+      100% {opacity: 0;}
+    }
 
-  /* IP Address display */
-  #ipDisplay {
-    text-align: center;
-    font-family: monospace;
-    color: #0f0;
-    margin-top: 20px;
-    font-size: 18px;
-  }
-</style>
+    /* Button styling */
+    #openLogin {
+      display: block;
+      margin: 20px auto;
+      background: black;
+      border: 2px solid #0f0;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #openLogin:hover {
+      background: #0b0;
+    }
+
+    /* Login Overlay */
+    #loginOverlay {
+      position: fixed; top: 0; left:0; width: 100vw; height: 100vh;
+      background: black;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      display: none;
+    }
+    #loginOverlay input {
+      background: black;
+      border: 2px solid #0f0;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 18px;
+      padding: 10px;
+      margin: 10px 0;
+      width: 250px;
+      outline: none;
+      text-align: center;
+    }
+    #loginOverlay button {
+      background: #0f0;
+      border: none;
+      color: black;
+      font-family: monospace;
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #loginOverlay button:hover {
+      background: #0b0;
+    }
+    #loginOverlay p {
+      color: red;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Password Overlay -->
-<div id="passwordGate">
-  <h2>Enter Password to Access</h2>
-  <input id="pwInput" type="password" autocomplete="off" placeholder="Password" />
-  <button id="pwBtn">Submit</button>
-  <p id="pwError">Wrong password! Try again.</p>
-</div>
+  <!-- Password Overlay -->
+  <div id="passwordGate">
+    <h2>Enter Password to Access</h2>
+    <input id="pwInput" type="password" autocomplete="off" placeholder="Password" />
+    <button id="pwBtn">Submit</button>
+    <p id="pwError">Wrong password! Try again.</p>
+  </div>
 
-<h1 class="glitch" style="margin-top: 50px; text-align:center;">YOU SHOULDN'T BE HERE</h1>
-<p class="glitch" style="text-align:center;">This site is cursed. Leave while you can.</p>
+  <!-- Main content hidden until password is correct -->
+  <div id="mainContent">
+    <h1 class="glitch" style="margin-top: 50px;">YOU SHOULDN'T BE HERE</h1>
+    <p class="glitch">This site is cursed. Leave while you can.</p>
 
-<!-- IP Address will show here -->
-<p id="ipDisplay">Your IP Address: Loading...</p>
+    <!-- IP Address -->
+    <p id="ipDisplay">Your IP Address: Loading...</p>
 
-<button style="display:block; margin:20px auto; background:black; border: 2px solid #0f0; color:#0f0; font-family: monospace; font-size:16px; padding: 10px 20px; cursor:pointer;" id="openLogin">Open Hacked Login Screen</button>
+    <button id="openLogin">Open Hacked Login Screen</button>
 
-<div id="console"></div>
+    <div id="console"></div>
 
-<div id="staticOverlay"></div>
+    <div id="staticOverlay"></div>
 
-<img id="flashface" src="https://i.imgur.com/fn6zNJN.png" alt="Scary Face" />
+    <img id="flashface" src="https://i.imgur.com/fn6zNJN.png" alt="Scary Face" />
 
-<div id="popups"></div>
+    <div id="popups"></div>
 
-<!-- Login Overlay -->
-<div id="loginOverlay">
-  <h2>LOGIN REQUIRED</h2>
-  <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" />
-  <button id="loginBtn">Enter</button>
-  <p id="loginMessage" style="color:red; display:none;">Wrong password!</p>
-</div>
+    <!-- Login Overlay -->
+    <div id="loginOverlay">
+      <h2>LOGIN REQUIRED</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" />
+      <button id="loginBtn">Enter</button>
+      <p id="loginMessage">Wrong password!</p>
+    </div>
+  </div>
 
-<audio id="jumpscare-audio" src="https://www.myinstants.com/media/sounds/horror-scream-4.mp3"></audio>
-<audio id="laugh" src="https://www.myinstants.com/media/sounds/evil-laugh.mp3"></audio>
+  <audio id="jumpscare-audio" src="https://www.myinstants.com/media/sounds/horror-scream-4.mp3"></audio>
+  <audio id="laugh" src="https://www.myinstants.com/media/sounds/evil-laugh.mp3"></audio>
 
-<script>
-  // Password gate logic
-  const correctPassword = "yourhacked";
-  const pwGate = document.getElementById('passwordGate');
-  const pwInput = document.getElementById('pwInput');
-  const pwBtn = document.getElementById('pwBtn');
-  const pwError = document.getElementById('pwError');
+  <script>
+    // Password gate logic
+    const correctPassword = "yourhacked";
+    const pwGate = document.getElementById('passwordGate');
+    const pwInput = document.getElementById('pwInput');
+    const pwBtn = document.getElementById('pwBtn');
+    const pwError = document.getElementById('pwError');
+    const mainContent = document.getElementById('mainContent');
+    const ipDisplay = document.getElementById('ipDisplay');
 
-  pwError.style.display = 'none'; // hide error initially
+    pwError.style.display = 'none'; // hide error initially
 
-  pwBtn.onclick = () => {
-    if(pwInput.value.trim().toLowerCase() === correctPassword) {
-      pwGate.style.display = 'none';
-      pwError.style.display = 'none';
-      // After unlocking, fetch and show IP
-      fetchIP();
-    } else {
-      pwError.style.display = 'block';
+    pwBtn.onclick = () => {
+      if(pwInput.value.trim().toLowerCase() === correctPassword) {
+        pwGate.style.display = 'none';
+        pwError.style.display = 'none';
+        mainContent.classList.add('visible');
+        fetchIP();
+        startEffects();
+      } else {
+        pwError.style.display = 'block';
+      }
+    };
+    pwInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') pwBtn.click();
+    });
+
+    // Fetch visitor IP using ipify API
+    function fetchIP() {
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          ipDisplay.textContent = "Your IP Address: " + data.ip;
+        })
+        .catch(() => {
+          ipDisplay.textContent = "Unable to detect IP";
+        });
     }
-  };
-  pwInput.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') pwBtn.click();
-  });
 
-  // Function to fetch visitor IP using ipify API
-  function fetchIP() {
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('ipDisplay').textContent = "Your IP Address: " + data.ip;
-      })
-      .catch(() => {
-        document.getElementById('ipDisplay').textContent = "Unable to detect IP";
-      });
-  }
+    // Terminal console logs
+    const log = [
+      "[ACCESSING FILES...]",
+      "[OVERRIDING SYSTEM PROTOCOLS]",
+      "[ERROR: HOST DETECTED]",
+      "[TRANSMISSION STARTED...]",
+      "[YOU CANNOT ESCAPE]",
+      "[CONNECTION LOST]",
+      "[REBOOTING SYSTEM]",
+    ];
+    let index = 0;
+    const consoleEl = document.getElementById("console");
 
-  // Terminal console logs
-  const log = [
-    "[ACCESSING FILES...]",
-    "[OVERRIDING SYSTEM PROTOCOLS]",
-    "[ERROR: HOST DETECTED]",
-    "[TRANSMISSION STARTED...]",
-    "[YOU CANNOT ESCAPE]",
-    "[CONNECTION LOST]",
-    "[REBOOTING SYSTEM]",
-  ];
-  let index = 0;
-  const consoleEl = document.getElementById("console");
-  setInterval(() => {
-    if(index < log.length){
-      consoleEl.innerHTML += log[index++] + "<br>";
-      consoleEl.scrollTop = consoleEl.scrollHeight;
-    }
-  }, 1500);
+    // Functions to run effects after login
+    function startEffects() {
+      // Start terminal logs
+      setInterval(() => {
+        if(index < log.length){
+          consoleEl.innerHTML += log[index++] + "<br>";
+          consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+      }, 1500);
 
-  // Open login overlay button
-  document.getElementById('openLogin').onclick = () => {
-    document.getElementById('loginOverlay').style.display = 'flex';
-  };
-
-  // Login functionality
-  document.getElementById('loginBtn').onclick = () => {
-    const input = document.getElementById('passwordInput').value.trim();
-    if(input.toLowerCase() === 'yourhacked') {
-      alert("ACCESS GRANTED");
-      document.getElementById('loginOverlay').style.display = 'none';
-      // Secret unlock effect
-      document.body.style.backgroundColor = '#400000';
+      // Play evil laugh after 10 seconds
       setTimeout(() => {
-        alert("SECRET PAGE UNLOCKED... but not really.");
-        location.reload();
-      }, 2000);
-    } else {
-      const msg = document.getElementById('loginMessage');
-      msg.style.display = 'block';
+        document.getElementById("laugh").play();
+      }, 10000);
+
+      // Flash scary face randomly
+      function flashFace() {
+        const face = document.getElementById('flashface');
+        face.style.display = 'block';
+        setTimeout(() => {
+          face.style.display = 'none';
+        }, 200);
+      }
+      setInterval(() => {
+        if(Math.random() < 0.3) { // 30% chance every 10 sec
+          flashFace();
+        }
+      }, 10000);
+
+      // Jump scare after random 50-70 seconds
+      function jumpScare() {
+        const audio = document.getElementById('jumpscare-audio');
+        audio.play();
+        document.body.style.backgroundColor = 'black';
+        document.body.innerHTML = "<h1 class='glitch'>TOO LATE...</h1>";
+      }
+      setTimeout(() => {
+        jumpScare();
+      }, Math.random() * 20000 + 50000);
+
+      // Keypress listener for creepy messages
+      window.addEventListener('keydown', e => {
+        if(e.key.toLowerCase() === 'x') {
+          alert("You pressed the forbidden key...");
+        }
+      });
+
+      // Secret code unlock: typing 'open' anywhere unlocks alert
+      let secretCode = '';
+      window.addEventListener('keydown', e => {
+        secretCode += e.key.toLowerCase();
+        if(secretCode.includes('open')) {
+          alert("SECRET PAGE UNLOCKED!");
+          secretCode = '';
+        }
+        if(secretCode.length > 10) secretCode = ''; // reset to prevent overflow
+      });
+
+      // Cursor disappears after 20 seconds
+      setTimeout(() => {
+        document.body.style.cursor = 'none';
+      }, 20000);
+
+      // Random creepy popups
+      const popupTexts = [
+        "RUN",
+        "HELP ME",
+        "DON'T LOOK",
+        "IT SEES YOU",
+        "GET OUT",
+        "YOU'RE NOT SAFE"
+      ];
+
+      function createPopup() {
+        const popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.textContent = popupTexts[Math.floor(Math.random() * popupTexts.length)];
+        popup.style.top = Math.random() * window.innerHeight + 'px';
+        popup.style.left = Math.random() * window.innerWidth + 'px';
+        document.getElementById('popups').appendChild(popup);
+        setTimeout(() => popup.remove(), 3000);
+      }
+      setInterval(createPopup, 5000);
+
+      // Open hacked login screen button logic
+      document.getElementById('openLogin').onclick = () => {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      };
+
+      // Login overlay logic
+      const loginBtn = document.getElementById('loginBtn');
+      const loginInput = document.getElementById('passwordInput');
+      const loginOverlay = document.getElementById('loginOverlay');
+      const loginMessage = document.getElementById('loginMessage');
+
+      loginMessage.style.display = 'none';
+
+      loginBtn.onclick = () => {
+        if(loginInput.value.trim().toLowerCase() === correctPassword) {
+          alert("ACCESS GRANTED");
+          loginOverlay.style.display = 'none';
+          document.body.style.backgroundColor = '#400000';
+          setTimeout(() => {
+            alert("SECRET PAGE UNLOCKED... but not really.");
+            location.reload();
+          }, 2000);
+        } else {
+          loginMessage.style.display = 'block';
+        }
+      };
+      loginInput.addEventListener('keydown', e => {
+        if(e.key === 'Enter') loginBtn.click();
+      });
     }
-  };
-
-  // Flash scary face randomly
-  function flashFace() {
-    const face = document.getElementById('flashface');
-    face.style.display = 'block';
-    setTimeout(() => {
-      face.style.display = 'none';
-    }, 200);
-  }
-  setInterval(() => {
-    if(Math.random() < 0.3) { // 30% chance each interval
-      flashFace();
-    }
-  }, 10000);
-
-  // Jump scare every ~60 seconds randomly between 50-70 secs
-  function jumpScare() {
-    const audio = document.getElementById('jumpscare-audio');
-    audio.play();
-    document.body.style.backgroundColor = 'black';
-    document.body.innerHTML = "<h1 class='glitch'>TOO LATE...</h1>";
-  }
-  setTimeout(function triggerJump() {
-    jumpScare();
-  }, Math.random() * 20000 + 50000);
-
-  // Keypress listener for creepy messages
-  window.addEventListener('keydown', e => {
-    if(e.key.toLowerCase() === 'x') {
-      alert("You pressed the forbidden key...");
-    }
-  });
-
-  // Secret code unlock: type "open" anywhere to unlock "hidden" page alert
-  let secretCode = '';
-  window.addEventListener('keydown', e => {
-    secretCode += e.key.toLowerCase();
-    if(secretCode.includes('open')) {
-      alert("SECRET PAGE UNLOCKED!");
-      secretCode = '';
-    }
-    if(secretCode.length > 10) secretCode = ''; // reset to prevent overflow
-  });
-
-  // Cursor disappears after 20 seconds
-  setTimeout(() => {
-    document.body.style.cursor = 'none';
-  }, 20000);
-
-  // Random creepy popups
-  const popupTexts = [
-    "RUN",
-    "HELP ME",
-    "DON'T LOOK",
-    "IT SEES YOU",
-    "GET OUT",
-    "YOU'RE NOT SAFE"
-  ];
-
-  function createPopup() {
-    const popup = document.createElement('div');
-    popup.className = 'popup';
-    popup.textContent = popupTexts[Math.floor(Math.random() * popupTexts.length)];
-    popup.style.top = Math.random() * window.innerHeight + 'px';
-    popup.style.left = Math.random() * window.innerWidth + 'px';
-    document.getElementById('popups').appendChild(popup);
-    setTimeout(() => popup.remove(), 3000);
-  }
-  setInterval(createPopup, 5000);
-
-  // Evil laugh after 10 seconds
-  setTimeout(() => {
-    document.getElementById("laugh").play();
-  }, 10000);
-</script>
+  </script>
 </body>
 </html>
