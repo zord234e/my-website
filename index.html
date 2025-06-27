@@ -4,15 +4,10 @@
   <title>My Website</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body style="background-color: black; color: white;">
+<body style="background-color: black; color: white; margin: 0;">
 
   <h1>Hello, world!</h1>
   <p>This is my first website.</p>
-
-  <!-- Toggle Theme Button -->
-  <button onclick="toggleTheme()" style="padding: 10px 20px; font-size: 1em; cursor: pointer; margin-top: 20px;">
-    Toggle Theme
-  </button>
 
   <!-- Jump scare code -->
   <div id="jumpScare" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:black; justify-content:center; align-items:center; flex-direction:column; z-index:1000; color:white; text-align:center;">
@@ -22,14 +17,32 @@
     </div>
   </div>
 
+  <!-- Toggle Theme Button (bottom-left corner) -->
+  <button onclick="toggleTheme()" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    font-size: 1em;
+    cursor: pointer;
+    z-index: 999;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #444;
+  ">
+    Toggle Theme
+  </button>
+
   <script>
-    // Jump scare shows after 5 seconds
+    // Jump scare logic
     const jumpScareDiv = document.getElementById('jumpScare');
     setTimeout(() => {
       jumpScareDiv.style.display = 'flex';
     }, 5000);
 
-    // Toggle between dark and light themes
+    // Theme toggle logic
     function toggleTheme() {
       const body = document.body;
       const isDark = body.classList.contains('dark');
