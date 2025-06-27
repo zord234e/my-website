@@ -155,6 +155,15 @@
     margin-top:10px;
     display:none;
   }
+
+  /* IP Address display */
+  #ipDisplay {
+    text-align: center;
+    font-family: monospace;
+    color: #0f0;
+    margin-top: 20px;
+    font-size: 18px;
+  }
 </style>
 </head>
 <body>
@@ -169,6 +178,9 @@
 
 <h1 class="glitch" style="margin-top: 50px; text-align:center;">YOU SHOULDN'T BE HERE</h1>
 <p class="glitch" style="text-align:center;">This site is cursed. Leave while you can.</p>
+
+<!-- IP Address will show here -->
+<p id="ipDisplay">Your IP Address: Loading...</p>
 
 <button style="display:block; margin:20px auto; background:black; border: 2px solid #0f0; color:#0f0; font-family: monospace; font-size:16px; padding: 10px 20px; cursor:pointer;" id="openLogin">Open Hacked Login Screen</button>
 
@@ -205,6 +217,8 @@
     if(pwInput.value.trim().toLowerCase() === correctPassword) {
       pwGate.style.display = 'none';
       pwError.style.display = 'none';
+      // After unlocking, fetch and show IP
+      fetchIP();
     } else {
       pwError.style.display = 'block';
     }
@@ -212,6 +226,18 @@
   pwInput.addEventListener('keydown', (e) => {
     if(e.key === 'Enter') pwBtn.click();
   });
+
+  // Function to fetch visitor IP using ipify API
+  function fetchIP() {
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('ipDisplay').textContent = "Your IP Address: " + data.ip;
+      })
+      .catch(() => {
+        document.getElementById('ipDisplay').textContent = "Unable to detect IP";
+      });
+  }
 
   // Terminal console logs
   const log = [
