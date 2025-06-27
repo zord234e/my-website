@@ -66,21 +66,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const pwError = document.getElementById('pwError');
   const mazeContainer = document.getElementById('mazeContainer');
 
-  // Levels: 2 easy/medium, 1 hard (last)
+  // ✅ NEW SOLVABLE EASY MAZE
   const levels = [
     {
       name: "Easy",
       map: [
         [1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,1,0,0,0,0,1],
-        [1,0,1,0,1,0,1,1,0,1],
-        [1,0,1,0,0,0,1,0,0,1],
-        [1,0,1,1,1,0,1,0,1,1],
-        [1,0,0,0,1,0,0,0,1,1],
-        [1,1,1,0,1,1,1,0,1,1],
-        [1,0,0,0,0,0,1,0,0,1],
-        [1,0,1,1,1,0,1,1,0,1],
-        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,1,1,1,1],
+        [1,1,1,1,0,1,0,1,1,1],
+        [1,1,1,1,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,0,0,0,1],
+        [1,1,1,1,1,1,0,0,1,1],
+        [1,1,1,1,1,1,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1]
       ]
     },
     {
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function shuffleLevels() {
     const temp = levels.slice(0, 2);
     levelOrder = temp.sort(() => Math.random() - 0.5);
-    levelOrder.push(levels[2]); // Hard level always last
+    levelOrder.push(levels[2]); // Always put hard level last
   }
 
   function drawMaze() {
