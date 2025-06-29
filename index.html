@@ -56,11 +56,6 @@
       font-size: 16px;
       color: red;
     }
-    #pwError {
-      color: red;
-      display: none;
-      margin-top: 5px;
-    }
   </style>
 </head>
 <body>
@@ -69,7 +64,14 @@
   <h2>Enter Password to Access</h2>
   <input id="pwInput" type="password" placeholder="Password" />
   <button id="pwBtn">Submit</button>
-  <p id="pwError">Wrong password!</p>
+  <p id="pwError" style="display:none; color:red;">Wrong password!</p>
+
+  <!-- Clickable Monkey GIF -->
+  <div style="text-align:center; margin-top:20px;">
+    <a href="https://tenor.com/view/monke-gif-4007877678756330230" target="_blank" rel="noopener noreferrer">
+      <img src="https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif" alt="Monkey GIF" style="width:150px; cursor:pointer;" />
+    </a>
+  </div>
 </div>
 
 <div id="mazeContainer">
@@ -221,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startTimer() {
-    timeLeft = 60;
     timerInterval = setInterval(() => {
       timeLeft--;
       const mins = Math.floor(timeLeft / 60);
@@ -243,9 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   pwBtn.addEventListener('click', () => {
-    const val = pwInput.value.trim();
+    const val = pwInput.value.trim().toLowerCase();
     if (val === correctPassword) {
-      pwError.style.display = 'none';
       pwGate.style.display = 'none';
       mazeContainer.style.display = 'block';
       statusBar.style.display = 'block';
