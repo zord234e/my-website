@@ -56,6 +56,11 @@
       font-size: 16px;
       color: red;
     }
+    #pwError {
+      color: red;
+      display: none;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -64,12 +69,7 @@
   <h2>Enter Password to Access</h2>
   <input id="pwInput" type="password" placeholder="Password" />
   <button id="pwBtn">Submit</button>
-  <p id="pwError" style="display:none; color:red;">Wrong password!</p>
-
-  <!-- Clickable Monke GIF -->
-  <a href="https://zord234e.github.io/my-website/" target="_blank">
-    <img src="https://media.tenor.com/5V_MQffNhW8AAAAC/monke.gif" alt="Monke GIF" style="width:200px; margin-top: 20px;">
-  </a>
+  <p id="pwError">Wrong password!</p>
 </div>
 
 <div id="mazeContainer">
@@ -188,4 +188,80 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.fillStyle = "blue";
     ctx.fillRect(end.x * blockSize, end.y * blockSize, blockSize, blockSize);
     ctx.fillStyle = "red";
-    ctx.fillRect(player.x * blockSize,
+    ctx.fillRect(player.x * blockSize, player.y * blockSize, blockSize, blockSize);
+    statusBar.innerText = `Level ${currentLevel + 1}`;
+  }
+
+  function move(dx, dy) {
+    const map = levelOrder[currentLevel].map;
+    const newX = player.x + dx;
+    const newY = player.y + dy;
+    if (map[newY][newX] === 0) {
+      player.x = newX;
+      player.y = newY;
+      drawMaze();
+      if (player.x === end.x && player.y === end.y) {
+        currentLevel++;
+        if (currentLevel < levelOrder.length) {
+          alert(`✅ Level ${currentLevel} passed!`);
+          player = { x: 1, y: 1 };
+          drawMaze();
+        } else {
+          alert("🎉 You passed the human test!");
+          clearInterval(timerInterval);
+          location.reload();
+        }
+      }
+    } else {
+      wallHitSound.play(); // Play sound when hitting a wall
+      alert("❌ You failed! Hit a wall.");
+      player = { x: 1, y: 1 };
+      drawMaze();
+    }
+  }
+
+  function startTimer() {
+    timeLeft = 60;
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("⏰ Time's up! You failed.");
+        location.reload();
+      }
+    }, 1000);
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowUp", "w"].includes(e.key)) move(0, -1);
+    if (["ArrowDown", "s"].includes(e.key)) move(0, 1);
+    if (["ArrowLeft", "a"].includes(e.key)) move(-1, 0);
+    if (["ArrowRight", "d"].includes(e.key)) move(1, 0);
+  });
+
+  pwBtn.addEventListener('click', () => {
+    const val = pwInput.value.trim();
+    if (val === correctPassword) {
+      pwError.style.display = 'none';
+      pwGate.style.display = 'none';
+      mazeContainer.style.display = 'block';
+      statusBar.style.display = 'block';
+      shuffleLevels();
+      drawMaze();
+      startTimer();
+    } else {
+      pwError.style.display = 'block';
+    }
+  });
+
+  pwInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') pwBtn.click();
+  });
+});
+</script>
+
+</body>
+</html>
